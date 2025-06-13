@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin | El Sabor Colombiano</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <img src="img/logo.png" alt="El Sabor Colombiano" style="width:80px;border-radius:50%;">
+    <h1>Panel de Administración</h1>
+    <p>Gestión de Productos, Stock, Ventas y QR</p>
+  </header>
+
+  <!-- LOGIN ADMIN -->
+  <div id="login-panel" style="max-width:350px;margin:2em auto;text-align:center;">
+    <h2>Acceso Administrador</h2>
+    <form id="form-login">
+      <label>Contraseña: <input type="password" id="admin-pass" required></label><br><br>
+      <button type="submit">Entrar</button>
+    </form>
+    <p id="login-error" style="color:#b71c1c;"></p>
+  </div>
+
+  <main style="display:none;">
+    <div style="text-align:right;margin-bottom:1em;">
+      <button onclick="mostrarCambiarClave()">Cambiar contraseña</button>
+      <button onclick="logout()">Cerrar sesión</button>
+    </div>
+
+    <section>
+      <h2>Agregar / Editar Producto</h2>
+      <form id="form-producto" enctype="multipart/form-data">
+        <input type="hidden" id="prod-id">
+        <label>Nombre: <input type="text" id="prod-nombre" required></label><br><br>
+        <label>Precio ($): <input type="number" id="prod-precio" step="0.01" min="0" required></label><br><br>
+        <label>Stock inicial: <input type="number" id="prod-stock" min="0" required></label><br><br>
+        <label>Imagen: <input type="file" id="prod-imagen" accept="image/*"></label><br>
+        <img id="preview-img" src="" alt="" style="display:none;width:60px;height:60px;margin:8px 0;"><br>
+        <button type="submit">Guardar</button>
+        <button type="button" onclick="limpiarFormulario()">Limpiar</button>
+      </form>
+    </section>
+    <hr>
+    <section>
+      <h2>Productos actuales</h2>
+      <table id="tabla-productos" border="1" cellpadding="8">
+        <thead>
+          <tr>
+            <th>Imagen</th>
+            <th>Nombre</th>
+            <th>Precio</th>
+            <th>Stock</th>
+            <th>Reponer</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+    <hr>
+    <section>
+      <h2>Historial de Ventas</h2>
+      <div style="margin-bottom:1em;">
+        <label>Desde: <input type="date" id="ventas-desde"></label>
+        <label>Hasta: <input type="date" id="ventas-hasta"></label>
+        <label>Mesa: <input type="number" id="ventas-mesa" style="width:50px;"></label>
+        <label>Producto: <input type="text" id="ventas-prod" placeholder="Nombre producto"></label>
+        <label>Cliente: <input type="text" id="ventas-cliente" placeholder="Nombre cliente"></label>
+        <button onclick="buscarVentas()">Buscar</button>
+        <button onclick="exportarVentasCSV()">Exportar a CSV</button>
+      </div>
+      <div id="tabla-ventas"></div>
+    </section>
+    <hr>
+    <section>
+      <h2>Imprimir QR de mesas</h2>
+      <label>Número de mesas: <input type="number" id="total-mesas" value="10" min="1" style="width:60px;"></label>
+      <button onclick="generarQRMesas()">Generar QR</button>
+      <div id="qrs-mesas" style="display:flex;flex-wrap:wrap;gap:1em;margin-top:1em;"></div>
+    </section>
+  </main>
+
+  <div id="modal-clave" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:#0005;z-index:999;text-align:center;padding-top:8em;"></div>
+  <script src="admin.js"></script>
+</body>
+</html>

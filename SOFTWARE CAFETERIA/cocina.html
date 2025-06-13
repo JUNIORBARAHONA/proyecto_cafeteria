@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Cocina | El Sabor Colombiano</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <img src="img/logo.png" alt="El Sabor Colombiano">
+    <h1>El Sabor Colombiano - Cocina</h1>
+    <p>Pedidos recibidos de las mesas</p>
+  </header>
+  <main>
+    <section>
+      <h2>Pedidos Pendientes</h2>
+      <audio id="audio-alerta" src="notificacion.mp3" preload="auto"></audio>
+      <div id="pedidos-cocina"></div>
+    </section>
+    <hr>
+    <section>
+      <h2>Reporte de Ventas</h2>
+      <label>Fecha: <input type="date" id="fechaReporte"></label>
+      <button onclick="mostrarReporteVentasPorFecha()">Mostrar</button>
+      <button onclick="exportarCSV()">Exportar a Excel/CSV</button>
+      <div id="reporte-ventas" style="margin-top:1em;"></div>
+    </section>
+  </main>
+  <script>
+  let ultimosPedidos = 0;
+  function mostrarPedidos() {
+    const pedidos = JSON.parse(localStorage.getItem('pedidosCafeteria') || "[]");
+    const contenedor = document.getElementById('pedidos-cocina');
+    if(pedidos.length === 0) {
+      contenedor.innerHTML = "<p>No hay pedidos pendientes.</p>";
+      ultimosPedidos = 0;
+      return;
+    }
+    if (pedidos.length > ultimosPedidos) {
+      document.getElementById('audio-alerta').play();
+      document.body.classList.add('alerta-nueva');
+      setTimeout(() => document.body.classList.remove('alerta-nueva'), 1000);
+    }
+    ultimosPedidos = pedidos.length;
+    contenedor.innerHTML = '';
+    pedidos.forEach((pedido, idx) => {
+      contenedor.innerHTML += `
+        <div style="border:2px solid #6d4c41; border-radius:12px; padding:1em; margin-bottom:1em; background:#fbe9e7;">
+          <b>Mesa:</b> ${pedido.numeroMesa}<br>
+          <b>Cliente:</b> ${pedido.nombreCliente}<br>
+          <b>Hora:</b> ${pedido.hora}<br>
+          <b>Pedido:</b>
+          <ul>
+            ${pedido.pedido.map(item => `<li>${item.nombre} x${item.cantidad}</li>`).join('')}
+          </ul>
+          <button onclick="marcarPreparado(${idx})" style="background:#43a047; color:#fff; border:none; border-radius:8px; padding:0.5em 1em; cursor:pointer;">Preparado</button>
+        </div>
+      `;
+    });
+  }
+
+  function agregarAVentasDiarias(pedido) {
+    const hoy = new Date().toISOString().slice(0,10);
+    const ventas = JSON.parse(localStorage.getItem('ventasDiarias') || "{}");
+    if (!ventas[hoy]) ventas[hoy] = [];
+    pedido.fecha = hoy; // Añade la fecha
+    ventas[hoy].push(pedido);
+    localStorage.setItem('ventasDiarias', JSON.stringify(ventas));
+  }
+
+  // Descontar stock al preparar pedido
+  function descontarStockPedido(pedido){
+    let productos = JSON.parse(localStorage.getItem('productosCafeteria') || "[]");
+    pedido.pedido.forEach(item => {
+      const idx = productos.findIndex(p => p.nombre === item.nombre);
+      if(idx !== -1){
+        productos[idx].stock -= item.cantidad;
+        if(productos[idx].stock < 0) productos[idx].stock = 0;
+      }
+    });
+    localStorage.setItem('productosCafeteria', JSON.stringify(productos));
+  }
+
+  function marcarPreparado(idx) {
+    const pedidos = JSON.parse(localStorage.getItem('pedidosCafeteria') || "[]");
+    const pedido = pedidos[idx];
+    agregarAVentasDiarias(pedido);
+    descontarStockPedido(pedido);
+    pedidos.splice(idx, 1);
+    localStorage.setItem('pedidosCafeteria', JSON.stringify(pedidos));
+    mostrarPedidos();
+  }
+
+  setInterval(mostrarPedidos, 2000);
+  mostrarPedidos();
+
+  // Reporte de ventas por fecha
+  function mostrarReporteVentasPorFecha() {
+    const fecha = document.getElementById('fechaReporte').value;
+    const ventasAll = JSON.parse(localStorage.getItem('ventasDiarias') || "{}");
+    const ventas = ventasAll[fecha] || [];
+    if (!fecha) {
+      document.getElementById('reporte-ventas').innerHTML = "<b>Selecciona una fecha.</b>";
+      return;
+    }
+    if (ventas.length === 0) {
+      document.getElementById('reporte-ventas').innerHTML = `<b>No hay ventas registradas para el ${fecha}.</b>`;
+      return;
+    }
+
+    let totalVentas = 0;
+    let productosVendidos = {};
+    ventas.forEach(pedido => {
+      pedido.pedido.forEach(item => {
+        totalVentas += item.precio * item.cantidad;
+        if (!productosVendidos[item.nombre]) productosVendidos[item.nombre] = 0;
+        productosVendidos[item.nombre] += item.cantidad;
+      });
+    });
+
+    let html = `<b>Reporte del ${fecha}</b><br>`;
+    html += `Total de pedidos: <b>${ventas.length}</b><br>`;
+    html += `Total vendido: <b>$${totalVentas.toFixed(2)}</b><br>`;
+    html += "Productos vendidos:<ul>";
+    for (const prod in productosVendidos) {
+      html += `<li>${prod}: ${productosVendidos[prod]}</li>`;
+    }
+    html += "</ul>";
+    document.getElementById('reporte-ventas').innerHTML = html;
+  }
+
+  // Exportar reporte de ventas a CSV
+  function exportarCSV() {
+    const fecha = document.getElementById('fechaReporte').value;
+    const ventasAll = JSON.parse(localStorage.getItem('ventasDiarias') || "{}");
+    const ventas = ventasAll[fecha] || [];
+    if (ventas.length === 0) {
+      alert('No hay ventas para exportar ese día');
+      return;
+    }
+    let csv = "Mesa,Cliente,Hora,Producto,Cantidad,Precio Unitario,Subtotal\n";
+    ventas.forEach(pedido => {
+      pedido.pedido.forEach(item => {
+        csv += `${pedido.numeroMesa},${pedido.nombreCliente},${pedido.hora},"${item.nombre}",${item.cantidad},${item.precio},${(item.precio*item.cantidad).toFixed(2)}\n`;
+      });
+    });
+    let blob = new Blob([csv], { type: "text/csv" });
+    let url = window.URL.createObjectURL(blob);
+    let a = document.createElement("a");
+    a.href = url;
+    a.download = `ventas_${fecha}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+  }
+  </script>
+</body>
+</html>

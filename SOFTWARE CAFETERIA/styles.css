@@ -1,0 +1,139 @@
+body {
+    background: #f8fafc;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+header {
+    background: #6d4c41;
+    color: #fff;
+    padding: 1rem 2rem;
+    text-align: center;
+}
+main {
+    max-width: 900px;
+    margin: 2rem auto;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px #0001;
+    padding: 2rem;
+}
+h2 {
+    color: #5d4037;
+    margin-bottom: 0.5em;
+}
+.productos, .pedido {
+    margin-bottom: 2rem;
+}
+.productos-lista, .pedido-lista {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 1rem;
+}
+.producto-card {
+    border: 1px solid #ececec;
+    border-radius: 12px;
+    padding: 1em;
+    background: #f5f5f5;
+    text-align: center;
+    box-shadow: 0 2px 8px #0001;
+}
+.producto-card button {
+    margin-top: 0.5em;
+    background: #8d6e63;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 0.5em 1em;
+    cursor: pointer;
+}
+.producto-card button:hover {
+    background: #6d4c41;
+}
+.pedido-lista {
+    margin-top: 1em;
+}
+.pedido-lista li {
+    padding: 0.5em 0;
+    border-bottom: 1px solid #ececec;
+}
+.factura {
+    background: #f3e5ab;
+    padding: 1rem;
+    border-radius: 10px;
+    margin-top: 2rem;
+}
+.factura p {
+    margin: 0.4em 0;
+}
+.btn-generar {
+    background: #43a047;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 0.7em 1.5em;
+    font-size: 1em;
+    margin-top: 1em;
+    cursor: pointer;
+}
+.btn-generar:hover {
+    background: #388e3c;
+}
+input[type="text"], input[type="number"], input[type="date"], input[type="password"] {
+    padding: 0.5em;
+    border-radius: 6px;
+    border: 1px solid #bdbdbd;
+    width: 200px;
+    margin: 0.3em 0;
+    font-size: 1em;
+}
+button {
+    transition: background 0.2s;
+}
+label {
+    font-weight: bold;
+}
+.producto-card img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 10px;
+    margin-bottom: 0.5em;
+    box-shadow: 0 2px 8px #0001;
+}
+header img {
+    width: 100px;
+    border-radius: 50%;
+    margin-bottom: 0.5em;
+}
+.alerta-nueva {
+  animation: flash-bg 1s;
+}
+@keyframes flash-bg {
+  0% { background: #ffe082; }
+  100% { background: #f8fafc; }
+}
+
+section.productos {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.productos-lista {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5em;
+    justify-content: center;
+    margin-bottom: 2em;
+}
+.pedido-lista {
+    margin: 0 auto 1em auto;
+    max-width: 350px;
+}
+
+#filtros-categoria button.seleccionado {
+    background: #ffa000;
+    color: #222;
+    font-weight: bold;
+    border: 2px solid #e65100;
+}

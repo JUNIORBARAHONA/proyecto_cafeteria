@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>El Sabor Colombiano - Pedido en Mesa</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <img src="img/logo.png" alt="El Sabor Colombiano">
+        <h1>El Sabor Colombiano</h1>
+        <p>Bienvenido. Haz tu pedido desde la mesa.</p>
+    </header>
+    <main>
+        <section id="identificacion">
+            <h2>Identifícate</h2>
+            <form id="form-identificacion">
+                <label>
+                    Tu Nombre:<br>
+                    <input type="text" id="nombreCliente" required>
+                </label>
+                <br><br>
+                <label>
+                    Número de Mesa:<br>
+                    <input type="number" id="numeroMesa" min="1" required>
+                </label>
+                <br><br>
+                <button type="submit">Entrar al Menú</button>
+            </form>
+        </section>
+
+        <section class="productos" id="seccionMenu" style="display:none;">
+            <h2>Menú de Productos</h2>
+            <div id="filtros-categoria" style="text-align:center; margin-bottom:1em;"></div>
+            <div class="productos-lista" id="productos-lista"></div>
+            <h3>Tu Pedido</h3>
+            <ul class="pedido-lista" id="pedido-lista"></ul>
+            <button class="btn-generar" onclick="enviarPedido()">Enviar Pedido</button>
+            <div style="margin-top:2em;">
+                <button class="btn-generar" onclick="llamarMesero()">Llamar Mesero</button>
+                <button class="btn-generar" onclick="pedirCuenta()">Pedir la Cuenta</button>
+            </div>
+        </section>
+
+        <section class="factura" id="mensajePedido" style="display:none;">
+            <h3>¡Pedido enviado!</h3>
+            <p>Tu pedido fue enviado a la cocina.<br>Pronto te atenderán.</p>
+            <div style="margin-top:1.2em;">
+                <button class="btn-generar" onclick="mostrarFacturaCliente()">Descargar Factura</button>
+                <button class="btn-generar" onclick="volverAlMenu()">Volver al menú</button>
+            </div>
+        </section>
+
+
+        <section class="factura" id="factura-modal" style="display:none;"></section>
+        <button class="btn-generar" onclick="imprimirFactura()" style="display:none;" id="btn-imprimir-factura">Imprimir factura</button>
+        <div id="extra-factura" style="display:none; margin-bottom:1em;">
+          <label>Observaciones:<br>
+            <input type="text" id="factura-observaciones" style="width:90%;">
+          </label>
+          <br>
+          <label>Propina: $<input type="number" id="factura-propina" min="0" step="0.01" style="width:60px;"></label>
+        </div>
+        <button class="btn-generar" onclick="enviarPorWhatsApp()" style="display:none;" id="btn-whatsapp-factura">Enviar por WhatsApp</button>
+        <button class="btn-generar" onclick="enviarPorCorreo()" style="display:none;" id="btn-correo-factura">Enviar por correo</button>
+    </main>
+    <script src="script.js"></script>
+</body>
+</html>

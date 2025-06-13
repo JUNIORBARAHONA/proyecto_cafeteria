@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Solicitudes Mesero | El Sabor Colombiano</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <img src="img/logo.png" alt="El Sabor Colombiano">
+    <h1>Solicitudes de Mesas</h1>
+  </header>
+  <main>
+    <audio id="audio-alerta" src="notificacion.mp3" preload="auto"></audio>
+    <section>
+      <h2>Solicitudes activas</h2>
+      <div id="solicitudes-lista"></div>
+    </section>
+  </main>
+  <script>
+    let ultimasSolicitudes = 0;
+    function mostrarSolicitudes() {
+      const solicitudes = JSON.parse(localStorage.getItem('solicitudesMesero') || "[]");
+      const contenedor = document.getElementById('solicitudes-lista');
+      if(solicitudes.length === 0) {
+        contenedor.innerHTML = "<p>No hay solicitudes pendientes.</p>";
+        ultimasSolicitudes = 0;
+        return;
+      }
+      if (solicitudes.length > ultimasSolicitudes) {
+        document.getElementById('audio-alerta').play();
+        document.body.classList.add('alerta-nueva');
+        setTimeout(() => document.body.classList.remove('alerta-nueva'), 1000);
+      }
+      ultimasSolicitudes = solicitudes.length;
+      contenedor.innerHTML = '';
+      solicitudes.forEach((s, idx) => {
+        if(!s.atendida){
+          contenedor.innerHTML += `
+            <div style="border:2px solid #00897b; border-radius:12px; padding:1em; margin-bottom:1em; background:#e0f2f1;">
+              <b>Mesa:</b> ${s.numeroMesa}<br>
+              <b>Cliente:</b> ${s.nombreCliente}<br>
+              <b>Solicitud:</b> ${s.tipo}<br>
+              <b>Hora:</b> ${s.hora}<br>
+              <button onclick="atenderSolicitud(${idx})" style="background:#43a047;color:#fff;border:none;border-radius:8px;padding:0.5em 1em;cursor:pointer;">Marcar como atendida</button>
+            </div>
+          `;
+        }
+      });
+    }
+
+    function atenderSolicitud(idx) {
+      let solicitudes = JSON.parse(localStorage.getItem('solicitudesMesero') || "[]");
+      solicitudes[idx].atendida = true;
+      localStorage.setItem('solicitudesMesero', JSON.stringify(solicitudes));
+      mostrarSolicitudes();
+    }
+
+    setInterval(mostrarSolicitudes, 2000);
+    mostrarSolicitudes();
+  </script>
+</body>
+</html>
