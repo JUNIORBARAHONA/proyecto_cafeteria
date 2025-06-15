@@ -1,7 +1,7 @@
 // --- INICIALIZAR MENÚ SOLO SI ESTÁ VACÍO ---
 if (!localStorage.getItem('productosCafeteria')) {
     const productosEjemplo = [
-        { nombre: 'Papas rellenas', categoria: 'Empanadas', precio: 2.50, stock: 20, imagen: 'img/papas_rellenas.jpg' },
+        { nombre: 'Papas rellenas', categoria: 'Papas', precio: 2.50, stock: 20, imagen: 'img/papas_rellenas.jpg' },
         { nombre: 'Empanadas de pollo', categoria: 'Empanadas', precio: 2.00, stock: 25, imagen: 'img/empanada_pollo.jpg' },
         { nombre: 'Empanadas de carne', categoria: 'Empanadas', precio: 2.00, stock: 25, imagen: 'img/empanada_carne.jpg' },
         { nombre: 'Empanadas rancheras', categoria: 'Empanadas', precio: 2.50, stock: 20, imagen: 'img/empanada_ranchera.jpg' },
